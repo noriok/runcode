@@ -1,9 +1,20 @@
 require 'systemu'
+require 'optparse'
 
-# EXTS = ['.cpp', '.cs', '.rb', '.py', '.lua', '.go', '.hs']
-EXTS = ['.cpp', '.cs', '.py', '.lua', '.go', '.hs']
+EXTS = ['.cpp', '.cs', '.py', '.lua', '.go', '.hs', '.rb']
 
-def latest_sorucefile
+def parse_args
+  args = {}
+  OptionParser.new do |parser|
+    # コマンドを出力しない
+    parser.on('-q', '--quiet') {|v| args[:quiet] = v }
+    parser.parse!(ARGV)
+  end
+  $quiet = args[:quiet]
+  args
+end
+
+def latest_sourcefile
   # 更新日時の最も新しいソースファイルを取得する
   fs = Dir.glob('*').select {|f| EXTS.include?(File.extname(f)) }
   xs = fs.sort {|a, b| File.stat(a).mtime <=> File.stat(b).mtime }
@@ -23,7 +34,8 @@ def compile(filename)
   end
 
   if command
-    puts "compile:#{command}"
+    # コンパイルコマンド
+    puts "# #{command}" unless $quiet
     _, stdout, stderr = systemu command
     if !stdout.empty?
       puts stdout
@@ -35,7 +47,7 @@ def compile(filename)
   end
 end
 
-def run(filename)
+def execute(filename)
   ext = File.extname(filename)
   command = nil
   case ext
@@ -44,11 +56,12 @@ def run(filename)
   when '.cs'
     command = 'mono a.exe'
   when '.rb'
-    _, stdout, _ = systemu "ruby #{filename}"
-    puts stdout
+    command = "ruby #{filename}"
   end
 
   if command
+    # 実行コマンド
+    puts "# #{command}" unless $quiet
     _, stdout, stderr = systemu command
     if !stdout.empty?
       puts stdout
@@ -61,10 +74,21 @@ def run(filename)
 end
 
 def main
-  filename = latest_sorucefile()
+  _ = parse_args()
 
-  compile(filename)
-  run(filename)
+  filename = nil
+  if ARGV.size > 0
+    filename = ARGV[0]
+  else
+    filename = latest_sourcefile()
+  end
+
+  if File.exists?(filename)
+    compile(filename)
+    execute(filename)
+  else
+    puts "file not found:#{filename}"
+  end
 end
 
 if $0 == __FILE__
