@@ -29,7 +29,7 @@ def compile(filename)
   when '.cpp'
     command = "g++ -std=c++11 #{filename}"
   when '.cs'
-    command = "mcs #{filename} -out:a.exe"
+    command = "mcs -debug #{filename} -out:a.exe"
   when '.rb'
   end
 
@@ -54,7 +54,7 @@ def execute(filename)
   when '.cpp'
     command = './a.out'
   when '.cs'
-    command = 'mono a.exe'
+    command = 'mono --debug a.exe'
   when '.rb'
     command = "ruby #{filename}"
   end
