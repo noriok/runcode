@@ -62,6 +62,12 @@ def execute(filename)
   if command
     # 実行コマンド
     puts "# #{command}" unless $quiet
+    system("#{command}")
+=begin
+    # 問題点:
+    # stdout を受け取る形にすると、無限ループに入るような
+    # プログラムだと途中の出力が見られない。
+
     _, stdout, stderr = systemu command
     if !stdout.empty?
       puts stdout
@@ -70,6 +76,8 @@ def execute(filename)
       puts '----- STDERR -----'
       puts stderr
     end
+=end
+
   end
 end
 
