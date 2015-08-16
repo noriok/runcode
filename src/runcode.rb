@@ -1,7 +1,41 @@
 require 'systemu'
 require 'optparse'
 
-EXTS = ['.cpp', '.cs', '.py', '.lua', '.go', '.hs', '.rb']
+=begin
+EXTS = [
+  '.cpp',
+  '.cs',
+  '.py',
+  '.lua',
+  '.go',
+  '.hs',
+  '.rb',
+  '.scala',
+]
+=end
+
+CommandMap = {
+  '.cpp' => {
+    :compile => 'g++ -std=c++11 %%',
+    :execute => './a.out',
+  },
+
+  '.cs' => {
+    :compile => 'mcs -debug %% -out:a.exe',
+    :execute => 'mono --debug a.exe',
+  },
+
+  '.rb' => {
+    :compile => nil,
+    :execute => 'ruby %%',
+  },
+
+  '.scala' => {
+    :compile => nil,
+    :execute => 'scala %%',
+  },
+
+}
 
 def parse_args
   args = {}
@@ -16,27 +50,39 @@ end
 
 def latest_sourcefile
   # 更新日時の最も新しいソースファイルを取得する
-  fs = Dir.glob('*').select {|f| EXTS.include?(File.extname(f)) }
+  exts = CommandMap.keys
+  fs = Dir.glob('*').select {|f| exts.include?(File.extname(f)) }
   xs = fs.sort {|a, b| File.stat(a).mtime <=> File.stat(b).mtime }
   xs.last
 end
 
-def compile(filename)
+def get_compile_command(filename)
+  ext = File.extname(filename)
+  m = CommandMap[ext]
+  cmd = m[:compile]
+  if cmd
+    cmd = cmd.sub('%%', filename)
+  end
+  cmd
+end
+
+def get_execute_command(filename)
   ext = File.extname(filename)
 
-  command = nil
-  case ext
-  when '.cpp'
-    command = "g++ -std=c++11 #{filename}"
-  when '.cs'
-    command = "mcs -debug #{filename} -out:a.exe"
-  when '.rb'
+  m = CommandMap[ext]
+  cmd = m[:execute]
+  if cmd
+    cmd = cmd.sub('%%', filename)
   end
+  cmd
+end
 
-  if command
+def compile(filename)
+  cmd = get_compile_command(filename)
+  if cmd
     # コンパイルコマンド
-    puts "# #{command}" unless $quiet
-    _, stdout, stderr = systemu command
+    puts "# #{cmd}" unless $quiet
+    _, stdout, stderr = systemu cmd
     if !stdout.empty?
       puts stdout
     end
@@ -48,21 +94,11 @@ def compile(filename)
 end
 
 def execute(filename)
-  ext = File.extname(filename)
-  command = nil
-  case ext
-  when '.cpp'
-    command = './a.out'
-  when '.cs'
-    command = 'mono --debug a.exe'
-  when '.rb'
-    command = "ruby #{filename}"
-  end
-
-  if command
+  cmd = get_execute_command(filename)
+  if cmd
     # 実行コマンド
-    puts "# #{command}" unless $quiet
-    system("#{command}")
+    puts "# #{cmd}" unless $quiet
+    system("#{cmd}")
 =begin
     # 問題点:
     # stdout を受け取る形にすると、無限ループに入るような
