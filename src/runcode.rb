@@ -41,10 +41,12 @@ def parse_args
   args = {}
   OptionParser.new do |parser|
     # コマンドを出力しない
-    parser.on('-q', '--quiet') {|v| args[:quiet] = v }
+    parser.on('-q', '--quiet')   {|v| args[:quiet] = v }
+    parser.on('-c', '--compile') {|v| args[:only_compile] = v }
     parser.parse!(ARGV)
   end
   $quiet = args[:quiet]
+  $only_compile = args[:only_compile]
   args
 end
 
@@ -129,7 +131,7 @@ def main
 
   if File.exists?(filename)
     compile(filename)
-    execute(filename)
+    execute(filename) unless $only_compile
   else
     puts "file not found:#{filename}"
   end
