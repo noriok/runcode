@@ -1,19 +1,6 @@
 require 'systemu'
 require 'optparse'
 
-=begin
-EXTS = [
-  '.cpp',
-  '.cs',
-  '.py',
-  '.lua',
-  '.go',
-  '.hs',
-  '.rb',
-  '.scala',
-]
-=end
-
 CommandMap = {
   '.cpp' => {
     :compile => 'g++ -std=c++11 %%',
@@ -35,6 +22,10 @@ CommandMap = {
     :execute => 'scala %%',
   },
 
+  '.jl' => {
+    :compile => nil,
+    :execute => 'julia %%',
+  },
 }
 
 def parse_args
