@@ -8,7 +8,7 @@ CommandMap = {
   },
 
   '.cs' => {
-    :compile => 'mcs -debug %% -out:a.exe',
+    :compile => 'mcs -r:System.Numerics -debug %% -out:a.exe',
     :execute => 'mono --debug a.exe',
   },
 
