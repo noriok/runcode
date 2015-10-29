@@ -26,6 +26,11 @@ CommandMap = {
     :compile => nil,
     :execute => 'julia %%',
   },
+
+  '.hs' => {
+    :compile => nil,
+    :execute => 'runhaskell %%',
+  },
 }
 
 def parse_args
