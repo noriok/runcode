@@ -31,6 +31,11 @@ CommandMap = {
     :compile => nil,
     :execute => 'runhaskell %%',
   },
+
+  '.go' => {
+    :compile => nil,
+    :execute => 'go run %%',
+  },
 }
 
 def parse_args
@@ -46,8 +51,8 @@ def parse_args
   args
 end
 
-def latest_sourcefile
-  # 更新日時の最も新しいソースファイルを取得する
+# 更新日時の最も新しいソースファイルを取得する
+def find_newest_filename
   exts = CommandMap.keys
   fs = Dir.glob('*').select {|f| exts.include?(File.extname(f)) }
   xs = fs.sort {|a, b| File.stat(a).mtime <=> File.stat(b).mtime }
@@ -118,11 +123,10 @@ end
 def main
   _ = parse_args()
 
-  filename = nil
-  if ARGV.size > 0
-    filename = ARGV[0]
-  else
-    filename = latest_sourcefile()
+  filename = find_newest_filename()
+  if filename.nil?
+    puts "target file not found"
+    exit
   end
 
   if File.exists?(filename)
