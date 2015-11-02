@@ -84,7 +84,7 @@ def compile(filename)
   cmd = get_compile_command(filename)
   if cmd
     # コンパイルコマンド
-    puts "# #{cmd}" unless $quiet
+    STDERR.puts "# #{cmd}" unless $quiet
     _, stdout, stderr = systemu cmd
     if !stdout.empty?
       puts stdout
@@ -100,7 +100,7 @@ def execute(filename)
   cmd = get_execute_command(filename)
   if cmd
     # 実行コマンド
-    puts "# #{cmd}" unless $quiet
+    STDERR.puts "# #{cmd}" unless $quiet
     system("#{cmd}")
 =begin
     # 問題点:
