@@ -36,6 +36,11 @@ CommandMap = {
     :compile => nil,
     :execute => 'go run %%',
   },
+
+  '.hx' => {
+    :compile => 'haxe -main %% -neko Main.n',
+    :execute => 'neko Main.n',
+  },
 }
 
 def parse_args
