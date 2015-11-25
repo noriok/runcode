@@ -12,6 +12,31 @@ CommandMap = {
     :execute => 'mono --debug a.exe',
   },
 
+  '.go' => {
+    :compile => nil,
+    :execute => 'go run %%',
+  },
+
+  '.hs' => {
+    :compile => nil,
+    :execute => 'runhaskell %%',
+  },
+
+  '.hx' => {
+    :compile => 'haxe -main %% -neko Main.n',
+    :execute => 'neko Main.n',
+  },
+
+  '.jl' => {
+    :compile => nil,
+    :execute => 'julia %%',
+  },
+
+  '.py' => {
+    :compile => nil,
+    :execute => 'python3 %%',
+  },
+
   '.rb' => {
     :compile => nil,
     :execute => 'ruby %%',
@@ -22,30 +47,6 @@ CommandMap = {
     :execute => 'scala %%',
   },
 
-  '.jl' => {
-    :compile => nil,
-    :execute => 'julia %%',
-  },
-
-  '.hs' => {
-    :compile => nil,
-    :execute => 'runhaskell %%',
-  },
-
-  '.go' => {
-    :compile => nil,
-    :execute => 'go run %%',
-  },
-
-  '.hx' => {
-    :compile => 'haxe -main %% -neko Main.n',
-    :execute => 'neko Main.n',
-  },
-
-  '.py' => {
-    :compile => nil,
-    :execute => 'python3 %%',
-  },
 }
 
 def parse_args
