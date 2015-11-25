@@ -41,6 +41,11 @@ CommandMap = {
     :compile => 'haxe -main %% -neko Main.n',
     :execute => 'neko Main.n',
   },
+
+  '.py' => {
+    :compile => nil,
+    :execute => 'python3 %%',
+  },
 }
 
 def parse_args
