@@ -32,6 +32,11 @@ CommandMap = {
     :execute => 'julia %%',
   },
 
+  '.js' => {
+    :compile => nil,
+    :execute => 'node %%',
+  },
+
   '.lua' => {
     :compile => nil,
     :execute => 'lua %%',
