@@ -1,6 +1,8 @@
 require 'systemu'
 require 'optparse'
 
+MARKER_FILENAME_WITHOUT_EXTENSION = '%filename-without-extension%'
+
 CommandMap = {
   '.cpp' => {
     :compile => 'g++ -std=c++11 %%',
@@ -25,6 +27,11 @@ CommandMap = {
   '.hx' => {
     :compile => 'haxe -main %% -neko Main.n',
     :execute => 'neko Main.n',
+  },
+
+  '.java' => {
+    :compile => 'javac %%',
+    :execute => "java #{MARKER_FILENAME_WITHOUT_EXTENSION}",
   },
 
   '.jl' => {
@@ -91,12 +98,14 @@ def get_compile_command(filename)
 end
 
 def get_execute_command(filename)
+  filename_without_extension = File.basename(filename, ".*")
   ext = File.extname(filename)
 
   m = CommandMap[ext]
   cmd = m[:execute]
   if cmd
     cmd = cmd.sub('%%', filename)
+    cmd = cmd.sub(MARKER_FILENAME_WITHOUT_EXTENSION, filename_without_extension)
   end
   cmd
 end
