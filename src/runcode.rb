@@ -87,23 +87,13 @@ def find_newest_filename
   xs.last
 end
 
-def get_compile_command(filename)
-  ext = File.extname(filename)
-  m = CommandMap[ext]
-  cmd = m[:compile]
-  if cmd
-    cmd = cmd.sub('%%', filename)
-  end
-  cmd
-end
-
-def get_execute_command(filename)
-  filename_without_extension = File.basename(filename, ".*")
+def get_command(command_type, filename)
   ext = File.extname(filename)
 
-  m = CommandMap[ext]
-  cmd = m[:execute]
+  cmd = CommandMap[ext][command_type]
   if cmd
+    filename_without_extension = File.basename(filename, ".*")
+
     cmd = cmd.sub('%%', filename)
     cmd = cmd.sub(MARKER_FILENAME_WITHOUT_EXTENSION, filename_without_extension)
   end
@@ -111,7 +101,7 @@ def get_execute_command(filename)
 end
 
 def compile(filename)
-  cmd = get_compile_command(filename)
+  cmd = get_command(:compile, filename)
   if cmd
     # コンパイルコマンド
     STDERR.puts "# #{cmd}" unless $quiet
@@ -127,7 +117,7 @@ def compile(filename)
 end
 
 def execute(filename)
-  cmd = get_execute_command(filename)
+  cmd = get_command(:execute, filename)
   if cmd
     # 実行コマンド
     STDERR.puts "# #{cmd}" unless $quiet
