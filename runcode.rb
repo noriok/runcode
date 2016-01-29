@@ -60,8 +60,8 @@ CommandMap = {
   },
 
   '.scala' => {
-    :compile => 'scalac %%',
-    :execute => 'scala Main',
+    :compile => nil,
+    :execute => "scala -i %% -e 'Main.main(null)'",
   },
 
 }
