@@ -64,6 +64,10 @@ CommandMap = {
     :execute => "scala -i %% -e 'Main.main(null)'",
   },
 
+  '.scm' => {
+    :compile => nil,
+    :execute => "gosh %%",
+  },
 }
 
 def parse_args
