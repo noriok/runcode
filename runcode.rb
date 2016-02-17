@@ -140,25 +140,20 @@ def execute(filename)
       puts stderr
     end
 =end
-
   end
 end
 
 def main
-  _ = parse_args()
+  parse_args()
 
   filename = find_newest_filename()
-  if filename.nil?
+  if filename.nil? || !File.exist?(filename)
     puts "target file not found"
     exit
   end
 
-  if File.exists?(filename)
-    compile(filename)
-    execute(filename) unless $only_compile
-  else
-    puts "file not found:#{filename}"
-  end
+  compile(filename)
+  execute(filename) unless $only_compile
 end
 
 if $0 == __FILE__
