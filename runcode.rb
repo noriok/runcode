@@ -1,74 +1,7 @@
 require 'systemu'
 require 'optparse'
 
-MARKER_FILENAME_WITHOUT_EXTENSION = '%filename-without-extension%'
-
-CommandMap = {
-  '.cpp' => {
-    :compile => 'g++ -std=c++11 %%',
-    :execute => './a.out',
-  },
-
-  '.cs' => {
-    :compile => 'mcs -checked+ -r:System.Numerics -debug %% -out:a.exe',
-    :execute => 'mono --debug a.exe',
-  },
-
-  '.go' => {
-    :compile => nil,
-    :execute => 'go run %%',
-  },
-
-  '.hs' => {
-    :compile => nil,
-    :execute => 'runhaskell %%',
-  },
-
-  '.hx' => {
-    :compile => 'haxe -main %% -neko Main.n',
-    :execute => 'neko Main.n',
-  },
-
-  '.java' => {
-    :compile => 'javac %%',
-    :execute => "java #{MARKER_FILENAME_WITHOUT_EXTENSION}",
-  },
-
-  '.jl' => {
-    :compile => nil,
-    :execute => 'julia %%',
-  },
-
-  '.js' => {
-    :compile => nil,
-    :execute => 'node %%',
-  },
-
-  '.lua' => {
-    :compile => nil,
-    :execute => 'lua %%',
-  },
-
-  '.py' => {
-    :compile => nil,
-    :execute => 'python3 %%',
-  },
-
-  '.rb' => {
-    :compile => nil,
-    :execute => 'ruby %%',
-  },
-
-  '.scala' => {
-    :compile => nil,
-    :execute => "scala -i %% -e 'Main.main(null)'",
-  },
-
-  '.scm' => {
-    :compile => nil,
-    :execute => "gosh %%",
-  },
-}
+require_relative './command'
 
 module Runcode
   module_function
@@ -126,23 +59,8 @@ module Runcode
   def execute(filename)
     cmd = get_command(:execute, filename)
     if cmd
-      # 実行コマンド
       STDERR.puts "# #{cmd}" unless $quiet
       system("#{cmd}")
-=begin
-    # 問題点:
-    # stdout を受け取る形にすると、無限ループに入るような
-    # プログラムだと途中の出力が見られない。
-
-    _, stdout, stderr = systemu command
-    if !stdout.empty?
-      puts stdout
-    end
-    if !stderr.empty?
-      puts '----- STDERR -----'
-      puts stderr
-    end
-=end
     end
   end
 
