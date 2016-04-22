@@ -65,6 +65,11 @@ CommandMap = {
     :compile => nil,
     :execute => "gosh %%",
   },
+
+  '.swift' => {
+    :compile => nil,
+    :execute => "swift %%",
+  },
 }
 
 
