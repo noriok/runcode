@@ -41,6 +41,16 @@ CommandMap = {
     :execute => 'node %%',
   },
 
+  '.kt' => {
+      :compile => 'kotlinc %% -include-runtime -d main.jar',
+      :execute => 'java -jar main.jar'
+  },
+
+  '.kts' => {
+      :compile => nil,
+      :execute => 'kotlinc -script %%'
+  },
+
   '.lua' => {
     :compile => nil,
     :execute => 'lua %%',
