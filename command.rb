@@ -7,8 +7,10 @@ CommandMap = {
   },
 
   '.cs' => {
-    :compile => 'mcs -checked+ -r:System.Numerics -debug %% -out:a.exe',
-    :execute => 'mono --debug a.exe',
+    # :compile => 'mcs -checked+ -r:System.Numerics -debug %% -out:a.exe',
+    # :execute => 'mono --debug a.exe',
+    :compile => 'csc /checked /out:a.exe /nologo %%',
+    :execute => 'mono a.exe',
   },
 
   '.go' => {
