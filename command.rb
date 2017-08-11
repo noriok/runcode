@@ -16,7 +16,7 @@ CommandMap = {
   '.d' => {
       :compile => nil,
       :execute => 'rdmd %%',
-  }
+  },
 
   '.go' => {
     :compile => nil,
