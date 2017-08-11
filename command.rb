@@ -13,6 +13,11 @@ CommandMap = {
     :execute => 'mono a.exe',
   },
 
+  '.d' => {
+      :compile => nil,
+      :execute => 'rdmd %%',
+  }
+
   '.go' => {
     :compile => nil,
     :execute => 'go run %%',
