@@ -63,6 +63,11 @@ CommandMap = {
     :execute => 'lua %%',
   },
 
+  '.php' => {
+      :compile => nil,
+      :execute => 'php %%',
+  },
+
   '.py' => {
     :compile => nil,
     :execute => 'python3 %%',
