@@ -23,8 +23,7 @@ module Runcode
   def find_newest_filename
     exts = CommandMap.keys
     fs = Dir.glob('*').select {|f| exts.include?(File.extname(f)) }
-    xs = fs.sort {|a, b| File.stat(a).mtime <=> File.stat(b).mtime }
-    xs.last
+    fs.max_by {|f| File.stat(f).mtime }
   end
 
   def get_command(command_type, filename)
@@ -32,10 +31,7 @@ module Runcode
 
     cmd = CommandMap[ext][command_type]
     if cmd
-      filename_without_extension = File.basename(filename, ".*")
-
       cmd = cmd.sub('%%', filename)
-      cmd = cmd.sub(MARKER_FILENAME_WITHOUT_EXTENSION, filename_without_extension)
     end
     cmd
   end

@@ -1,5 +1,3 @@
-MARKER_FILENAME_WITHOUT_EXTENSION = '%filename-without-extension%'
-
 CommandMap = {
   '.cpp' => {
     :compile => 'g++ -std=c++11 %%',
@@ -31,11 +29,6 @@ CommandMap = {
   '.hx' => {
     :compile => 'haxe -main %% -neko Main.n',
     :execute => 'neko Main.n',
-  },
-
-  '.java' => {
-    :compile => 'javac %%',
-    :execute => "java #{MARKER_FILENAME_WITHOUT_EXTENSION}",
   },
 
   '.jl' => {
@@ -76,11 +69,6 @@ CommandMap = {
   '.rb' => {
     :compile => nil,
     :execute => 'ruby %%',
-  },
-
-  '.scala' => {
-    :compile => nil,
-    :execute => "scala -i %% -e 'Main.main(null)'",
   },
 
   '.scm' => {
