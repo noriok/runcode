@@ -1,47 +1,36 @@
 require 'systemu'
-require 'optparse'
-
-require_relative './command'
+require 'pathname'
+require 'yaml'
 
 module Runcode
   module_function
 
-  def parse_args
-    args = {}
-    OptionParser.new do |parser|
-      # コマンドを出力しない
-      parser.on('-q', '--quiet')   {|v| args[:quiet] = v }
-      parser.on('-c', '--compile') {|v| args[:only_compile] = v }
-      parser.parse!(ARGV)
+  # 実行するファイルとコマンドを返す
+  def find_execute_target(cmds)
+    fs = Dir.glob('*').select {|f| cmds.include?(File.extname(f)) }
+    filename = fs.max_by {|f| File.stat(f).mtime }
+    return filename, cmds[File.extname(filename)]
+  end
+
+  def load_yaml
+    path = Pathname(File.dirname(__FILE__)).join('command.yaml').to_path
+    YAML.load_file(path)
+  end
+
+  def run()
+    cmds = load_yaml()
+    filename, cmd = find_execute_target(cmds)
+
+    if filename.nil?
+      STDERR.puts 'execute file not found'
+      exit
     end
-    $quiet = args[:quiet]
-    $only_compile = args[:only_compile]
-    args
-  end
 
-  # 更新日時の最も新しいソースファイルを取得する
-  def find_newest_filename
-    exts = CommandMap.keys
-    fs = Dir.glob('*').select {|f| exts.include?(File.extname(f)) }
-    fs.max_by {|f| File.stat(f).mtime }
-  end
-
-  def get_command(command_type, filename)
-    ext = File.extname(filename)
-
-    cmd = CommandMap[ext][command_type]
-    if cmd
-      cmd = cmd.sub('%%', filename)
-    end
-    cmd
-  end
-
-  def compile(filename)
-    cmd = get_command(:compile, filename)
-    if cmd
-      # コンパイルコマンド
-      STDERR.puts "# #{cmd}" unless $quiet
-      _, stdout, stderr = systemu cmd
+    # コンパイル
+    if cmd.include?('compile')
+      compile_cmd = cmd['compile'].sub('%%', filename)
+      STDERR.puts "# #{compile_cmd}"
+      _, stdout, stderr = systemu compile_cmd
       if !stdout.empty?
         puts stdout
       end
@@ -50,35 +39,29 @@ module Runcode
         exit(1)
       end
     end
-  end
 
-  def execute(filename)
-    cmd = get_command(:execute, filename)
-    if cmd
-      STDERR.puts "# #{cmd}" unless $quiet
-      system("#{cmd}")
+    # 実行
+    if cmd.include?('execute')
+      execute_cmd = cmd['execute'].sub('%%', filename)
+      STDERR.puts "# #{execute_cmd}"
+      system("#{execute_cmd}")
     end
   end
 
-  def execute2(filename, input)
-    cmd = get_command(:execute, filename)
-    if cmd
-      status, stdout, stderr = systemu cmd, 0=>input
-      return status, stdout, stderr
-    end
-  end
-
-  def main
-    parse_args()
-
-    filename = find_newest_filename()
-    if filename.nil? || !File.exist?(filename)
-      puts "target file not found"
+  def execute_with_input(filename, input)
+    cmds = load_yaml()
+    unless cmds.include?(File.extname(filename))
+      puts "command not found: #{filename}"
       exit
     end
 
-    compile(filename)
-    execute(filename) unless $only_compile
+    execute_cmd = cmds[File.extname(filename)]['execute'].sub('%%', filename)
+    status, stdout, stderr = systemu execute_cmd, 0=>input
+    return status, stdout, stderr
+  end
+
+  def main
+    run()
   end
 end
 

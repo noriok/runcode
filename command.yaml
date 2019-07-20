@@ -1,0 +1,17 @@
+.d:
+  execute: rdmd %%
+
+.go:
+  execute: go run %$
+
+.jl:
+  execute: julia %%
+
+.py:
+  execute: python3 %%
+
+.rb:
+  execute: ruby %%
+
+.scm:
+  execute: gosh %%

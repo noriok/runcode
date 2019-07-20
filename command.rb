@@ -1,3 +1,4 @@
+=begin
 CommandMap = {
   '.cpp' => {
     :compile => 'g++ -std=c++11 %%',
@@ -81,5 +82,4 @@ CommandMap = {
     :execute => "swift %%",
   },
 }
-
-
+=end
