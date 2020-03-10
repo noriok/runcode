@@ -26,20 +26,6 @@ module Runcode
       exit
     end
 
-    # コンパイル
-    if cmd.include?('compile')
-      compile_cmd = cmd['compile'].sub('%%', filename)
-      STDERR.puts "# #{compile_cmd}"
-      _, stdout, stderr = systemu compile_cmd
-      if !stdout.empty?
-        puts stdout
-      end
-      if !stderr.empty?
-        puts stderr
-        exit(1)
-      end
-    end
-
     # 実行
     if cmd.include?('execute')
       execute_cmd = cmd['execute'].sub('%%', filename)
